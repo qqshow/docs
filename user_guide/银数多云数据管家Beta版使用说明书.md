@@ -183,19 +183,27 @@ deletionPolicy: Retain
 
 第二步，配置Volumesnapshot CRD。
 
+目前，银数多云数据管家支持的Snapshot CRD版本为v1beta1。
+
 1. 获取external-snapshotter的代码仓库：
 
 ```bash
 git clone https://github.com/kubernetes-csi/external-snapshotter.git
 ```
 
-2. 进入external-snapshotter目录，执行以下命令来创建CRD：
+2. 进入external-snapshotter目录，切换到`release-2.0`分支
+
+```bash
+git checkout release-2.0
+```
+
+3. 执行以下命令来创建CRD：
 
 ```bash
 kubectl create -f config/crd
 ```
 
-3. 执行以下命令来创建snapshot controller：
+4. 执行以下命令来创建snapshot controller：
 
 ```bash
 kubectl create -f deploy/kubernetes/snapshot-controller/
@@ -399,6 +407,8 @@ YH1000 Beta版本支持采用文件系统拷贝或者快照的方式进行持久
 
 - 银数多云数据管家在配置多集群时，如果配置一个对象存储的bucket（意味着多个集群共享同一个备份仓库），定时的文件系统方式的备份有一定概率遇到拿不到对象仓库的锁而导致备份失败。  
   变通方案：对每个集群配置不同的对象仓库的bucket（对象仓库可以是一个，但bucket要分开）。
+- 执行应用迁移时，待迁移的应用的PVC的`DataSource`不能是`VolumeSnapshot`，否则迁移会一直卡在目标集群的恢复阶段。  
+  原因：如果待迁移的应用是通过CSI快照方式恢复出来的，PVC的`DataSource`就会变成`VolumeSnapshot`，这时候再迁移就会出问题。
 
 ## 9. 故障与诊断
 
@@ -414,8 +424,8 @@ TBD
 - 快照恢复失败  
   可能原因：快照的SnapshotClass的`deletionPolicy`不是`Retain`。
   解决方法：用`kubectl`查看相应的`volumesnapshotcontents` CR，看`deletionPolicy`是不是`Retain`，如果不是，请参考3.4节的“配置快照”，并修改SnapshotClass的yaml文件，重新apply。
-- 备份卡在50%左右一直不动  
-  可能原因：当前集群前面有备份一直完成不了，卡在Velero的队列中。
-  解决方法：查看是否有一个备份一直在进行，等前一个备份完成，或者超时（现在大约要4小时）后，当前这个备份就会开始。
+- 备份/恢复/迁移任务卡在50%左右一直不动  
+  可能原因：当前集群前面有备份/恢复一直完成不了，卡在Velero的队列中。
+  解决方法：查看是否有一个备份/恢复一直在进行，等前一个备份完成，或者超时（现在大约要4小时）后，当前这个任务就会开始。如果不想等，可以重启Velero的Pod来观察问题是否解决。
 - 恢复很慢，花了比预期多很多的时间  
   可能原因：如果是异地恢复，可以去查看恢复的命名空间，看Pod是不是Image Pull失败，或者有什么异常情况，导致Pod起来太慢。
