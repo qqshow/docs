@@ -44,11 +44,11 @@
 
 备份示意图：
 
-<img src="https://gitee.com/jibutech/tech-docs/raw/master/images/use-case-backup.png" style="zoom:50%;" />
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/use-case-backup.png)
 
 恢复示意图：
 
-<img src="https://gitee.com/jibutech/tech-docs/raw/master/images/use-case-local-restore.png" style="zoom:50%;" />
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/use-case-local-restore.png)
 
 ### 1.2 在其它Kubernetes集群中恢复应用和数据
 
@@ -93,7 +93,7 @@
 
 第二步，点击“添加集群”按钮进入集群添加页面：
 
-<img src="https://gitee.com/jibutech/tech-docs/raw/master/images/add-new-cluster.png" style="zoom:50%;" />
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/add-new-cluster.png)
 
 “集群名称”请输入待保护Kubernetes集群名称。
 
@@ -113,7 +113,7 @@
 
 第二步，点击“创建备份仓库”按钮进入备份仓库添加页面：
 
-<img src="https://gitee.com/jibutech/tech-docs/raw/master/images/add-new-s3.png" style="zoom:50%;" />
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/add-new-s3.png)
 
 选择备份仓库类型，输入数据备份仓库名称，S3存储空间名称，S3存储空间区域，访问密钥及访问密钥口令，若选择的备份仓库类型为S3，则还需要输入访问域名。
 
@@ -219,7 +219,7 @@ kubectl create -f deploy/kubernetes/snapshot-controller/
 
 第一步，点击“创建应用备份任务”按钮进入备份任务添加页面：
 
-<img src="https://gitee.com/jibutech/tech-docs/raw/master/images/create-backup-plan.png"  />
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/create-backup-plan.png)
 
 用户需要输入备份任务的名称，选择待保护的集群，以及备份目标仓库。
 
@@ -275,7 +275,7 @@ YS1000 Beta版本支持采用文件系统拷贝或者快照的方式进行持久
 
 点击“确定”按钮，备份作业即开始运行。
 
-<img src="https://gitee.com/jibutech/tech-docs/raw/master/images/create-backup-plan-done.png" style="zoom:50%;" />
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/create-backup-plan-done.png)
 
 ### 4.3 查看备份作业
 
@@ -389,7 +389,7 @@ YS1000 Beta版本支持采用文件系统拷贝或者快照的方式进行持久
 
 用户可以选择迁移过程中是否停止源集群中的应用运行。例如对于支持宕机一致性（crash-consistency）的应用，如果不希望在迁移过程中停止源集群中的应用运行，用户可以勾选此选项。
 
-<img src="https://gitee.com/jibutech/tech-docs/raw/master/images/dont-stop-app-at-mig.png" style="zoom:50%;" />
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/dont-stop-app-at-mig.png)
 
 点击“迁移”按钮，迁移作业即开始运行。
 
