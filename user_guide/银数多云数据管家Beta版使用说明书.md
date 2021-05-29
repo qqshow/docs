@@ -29,10 +29,9 @@
   - [7.2 执行迁移任务](#72-执行迁移任务)
   - [7.3 查看迁移作业](#73-查看迁移作业)
   - [7.4 修改相应应用信息](#74-修改相应应用信息)
-- [8. 局限性](#8-局限性)
-- [9. 故障与诊断](#9-故障与诊断)
-  - [9.1 日志收集](#91-日志收集)
-  - [9.2 常见问题](#92-常见问题)
+- [8. 故障与诊断](#8-故障与诊断)
+  - [8.1 日志收集](#81-日志收集)
+  - [8.2 常见问题](#82-常见问题)
 
 ## 1. 银数多云数据管家典型用户场景介绍
 
@@ -89,11 +88,11 @@
 
 第一步，从左侧菜单栏中选择“集群信息”进入集群配置页面：
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/cluster-config.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/cluster-config-beta.png)
 
 第二步，点击“添加集群”按钮进入集群添加页面：
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/add-new-cluster.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/add-cluster-beta.png)
 
 “集群名称”请输入待保护Kubernetes集群名称。
 
@@ -109,11 +108,11 @@
 
 第一步，从左侧菜单栏中选择“数据备份仓库”进入数据备份仓库配置页面：
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/s3-config-page.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/config-s3-beta.png)
 
 第二步，点击“创建备份仓库”按钮进入备份仓库添加页面：
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/add-new-s3.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/add-s3-beta.png)
 
 选择备份仓库类型，输入数据备份仓库名称，S3存储空间名称，S3存储空间区域，访问密钥及访问密钥口令，若选择的备份仓库类型为S3，则还需要输入访问域名。
 
@@ -213,17 +212,17 @@ kubectl create -f deploy/kubernetes/snapshot-controller/
 
 在银数多云数据管家左侧菜单栏中选择“集群应用备份”进入备份页面。
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/backup-page.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/backup-page-beta.png)
 
 ### 4.1 创建备份策略
 
 第一步，点击“创建应用备份任务”按钮进入备份任务添加页面：
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/create-backup-plan.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/backup-config1-beta.png)
 
 用户需要输入备份任务的名称，选择待保护的集群，以及备份目标仓库。
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/create-backup-repeat.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/backup-config2-beta.png)
 
 同时，用户需要选择备份策略和备份保留时长。
 
@@ -241,27 +240,27 @@ YS1000 Beta版支持两种备份策略：按需备份和定时备份。
 
 用户可以通过“筛选”按钮对命名空间进行筛选，或者通过搜索栏搜索相关名称快速找到需要备份的命名空间。
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/create-backup-plan-select-ns.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/backup-config3-beta.png)
 
 第三步，点击“下一步”确认需要备份的持久卷。
 
 系统会自动选择出用户指定命名空间中使用到的持久卷，用户可以进行确认。
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/create-backup-plan-pvc.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/backup-config4-beta.png)
 
 第四步，点击“下一步”选择持久卷的备份方法。
 
 YS1000 Beta版本支持采用文件系统拷贝或者快照的方式进行持久卷备份。（**注意：采用快照方式备份的数据，恢复时只能恢复回备份集群，不支持跨集群恢复和迁移**）
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/create-backup-plan-fs-copy.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/backup-config-fs-beta.png)
 
 如果要选择快照方式进行备份，请首先按照3.4节“配置快照”进行配置，然后在“复制方法”选择`Volume snapshot`方式。
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/create-backup-plan-snapshot.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/backup-pv-snap-beta.png)
 
 第五步，点击“下一步”选择备份前可以执行的钩子程序。
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/create-restore-hook.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/backup-hook-beta.png)
 
 点击“完成”按钮后，备份任务创建成功，系统会自动对备份任务进行验证。
 
@@ -271,17 +270,17 @@ YS1000 Beta版本支持采用文件系统拷贝或者快照的方式进行持久
 
 在备份页面中，选择对应备份任务的“<img src="https://gitee.com/jibutech/tech-docs/raw/master/images/backup-column.png" style="zoom:50%;" />”列，在操作中选择“备份”，即可触发备份作业。
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/start-backupjob2.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/start-backup-beta.png)
 
 点击“确定”按钮，备份作业即开始运行。
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/create-backup-plan-done.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/backup-confirm-beta.png)
 
 ### 4.3 查看备份作业
 
 在备份页面中，点击“备份任务”栏的链接，即可查看备份作业的执行情况。
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/view-backupjobs.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/backupjob-started-beta.png)
 
 ## 5. 恢复至本集群
 
@@ -289,33 +288,33 @@ YS1000 Beta版本支持采用文件系统拷贝或者快照的方式进行持久
 
 在YS1000左侧菜单栏中选择“集群应用恢复”进入恢复页面。
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/restore-page.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/restore-page-beta.png)
 
 ### 5.1 创建应用恢复任务
 
 第一步，点击“创建应用恢复任务”按钮进入应用恢复任务添加页面：
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/create-restore-plan.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/restore-config1-beta.png)
 
 输入应用恢复任务名称，并选择目标恢复集群，此处选择本地kubernetes集群。
 
 这里可以指定对命名空间进行修改（**注意，如果使用快照方式进行备份，恢复时不能修改命名空间**），修改的格式为“源命名空间名：目标命名空间名”，以下是一个例子：
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/create-restore-plan-ns-convert.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/restore-config-ns-beta.png)
 
 第二步，点击下一步并选择一个备份任务。
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/create-restore-select-backup.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/restore-select-backup-beta.png)
 
 第三步，点击“下一步”选择需要一个已完成的备份作业。
 
 用户可以根据备份作业对应的时间、命名空间等信息选择自己需要的备份数据。
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/create-restore-select-backupjob.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/restore-select-backupjob-beta.png)
 
 第四步，点击“下一步”选择应用恢复后可以执行的钩子程序。
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/restore-hook.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/restore-hook-beta.png)
 
 点击“完成”按钮后，恢复任务创建成功，系统会自动对恢复任务进行验证。
 
@@ -323,11 +322,13 @@ YS1000 Beta版本支持采用文件系统拷贝或者快照的方式进行持久
 
 在应用恢复页面中，选择恢复任务列的链接，在相应恢复作业的"<img src="https://gitee.com/jibutech/tech-docs/raw/master/images/backup-column.png" style="zoom:50%;" />"列操作中选择“激活”，即可触发任务恢复作业。
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/start-restorejob.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/start-restore-beta.png)
 
 ### 5.3 查看应用恢复作业
 
 在应用恢复页面中，点击恢复任务栏的链接，即可查看恢复作业的执行情况。
+
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/restore-status-beta.png)
 
 ## 6. 恢复至其它集群
 
@@ -349,13 +350,15 @@ YS1000 Beta版本支持采用文件系统拷贝或者快照的方式进行持久
 
 在银数多云数据管家左侧菜单栏中选择“跨集群应用迁移”进入应用迁移页面。
 
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/mig-page-beta.png)
+
 ### 7.1 创建迁移任务
 
 **【注意】在开始执行跨集群迁移任务前，要确认迁移的目标集群不存在资源冲突。**例如，如果迁移一个命名空间A到集群B，则要确认集群B不存在命名空间A。
 
  第一步，点击“创建迁移任务”按钮进入迁移任务添加页面：
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/create-migration-plan.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/mig-config-beta.png)
 
 用户需要输入迁移任务名称，选择源端集群和目标端集群，以及备份仓库。
 
@@ -365,31 +368,31 @@ YS1000 Beta版本支持采用文件系统拷贝或者快照的方式进行持久
 
 用户可以通过“筛选”按钮对命名空间进行筛选，或者通过搜索栏搜索相关名称快速找到需要备份的命名空间。
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/create-mig-select-ns.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/mig-sel-ns-beta.png)
 
 第三步，点击“下一步”确认需要迁移的相关持久卷。
 
 系统会自动选择出用户指定命名空间中使用到的持久卷，用户可以进行确认。
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/create-mig-select-pvc.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/mig-sel-pv-beta.png)
 
 第四步，点击“下一步”选择持久卷的拷贝方法。
 
 银数多云数据管家Beta版本只支持文件系统拷贝的方式进行跨集群迁移。用户需要选择目标集群上应用恢复时需要使用的StorageClass。目标端集群使用的StorageClass和源端集群使用的StorageClass可以不同。
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/create-mig-select-sc.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/mig-sel-sc-beta.png)
 
 ### 7.2 执行迁移任务
 
 在应用迁移页面中，选择对应迁移任务的""列，在操作中选择“一键迁移”，即可触发迁移作业。
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/start-migjob.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/start-mig-beta.png)
 
 迁移过程默认会停掉源集群中选定命名空间内的应用，以保证数据一致性。
 
 用户可以选择迁移过程中是否停止源集群中的应用运行。例如对于支持宕机一致性（crash-consistency）的应用，如果不希望在迁移过程中停止源集群中的应用运行，用户可以勾选此选项。
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/dont-stop-app-at-mig.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/mig-confirm-beta.png)
 
 点击“迁移”按钮，迁移作业即开始运行。
 
@@ -397,35 +400,31 @@ YS1000 Beta版本支持采用文件系统拷贝或者快照的方式进行持久
 
 在迁移页面中，点击迁移任务栏的链接，即可查看迁移作业的执行情况。
 
-![](https://gitee.com/jibutech/tech-docs/raw/master/images/mig-started.png)
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/mig-started-beta.png)
 
 ### 7.4 修改相应应用信息
 
 在目标端集群重新启动应用后，对于和源集群有冲突的资源需要进行相应的更改，然后才能在目标端完全恢复应用。如wordpress在目标端重启启动后，仍旧会绑定源端使用的域名，这时需要管理员将域名指向目标端集群IP，或者执行特定脚本来更改新域名。
 
-## 8. 局限性
+## 8. 故障与诊断
 
-- 银数多云数据管家在配置多集群时，如果配置一个对象存储的bucket（意味着多个集群共享同一个备份仓库），定时的文件系统方式的备份有一定概率遇到拿不到对象仓库的锁而导致备份失败。  
-  变通方案：对每个集群配置不同的对象仓库的bucket（对象仓库可以是一个，但bucket要分开）。
-- 执行应用迁移时，待迁移的应用的PVC的`DataSource`不能是`VolumeSnapshot`，否则迁移会一直卡在目标集群的恢复阶段。  
-  原因：如果待迁移的应用是通过CSI快照方式恢复出来的，PVC的`DataSource`就会变成`VolumeSnapshot`，这时候再迁移就会出问题。
-
-## 9. 故障与诊断
-
-### 9.1 日志收集
+### 8.1 日志收集
 
 TBD
 
-### 9.2 常见问题
+### 8.2 常见问题
 
 - 快照备份不工作  
-  可能原因：快照的SnapshotClass没配好，比如没有加所需要的label。
+  可能原因：快照的SnapshotClass没配好，比如没有加所需要的label。  
   解决方法：请参考3.4节的“配置快照”，把相应的配置做好。
 - 快照恢复失败  
-  可能原因：快照的SnapshotClass的`deletionPolicy`不是`Retain`。
+  可能原因：快照的SnapshotClass的`deletionPolicy`不是`Retain`。  
   解决方法：用`kubectl`查看相应的`volumesnapshotcontents` CR，看`deletionPolicy`是不是`Retain`，如果不是，请参考3.4节的“配置快照”，并修改SnapshotClass的yaml文件，重新apply。
 - 备份/恢复/迁移任务卡在50%左右一直不动  
-  可能原因：当前集群前面有备份/恢复一直完成不了，卡在Velero的队列中。
+  可能原因：当前集群前面有备份/恢复一直完成不了，卡在Velero的队列中。  
   解决方法：查看是否有一个备份/恢复一直在进行，等前一个备份完成，或者超时（现在大约要4小时）后，当前这个任务就会开始。如果不想等，可以重启Velero的Pod来观察问题是否解决。
 - 恢复很慢，花了比预期多很多的时间  
-  可能原因：如果是异地恢复，可以去查看恢复的命名空间，看Pod是不是Image Pull失败，或者有什么异常情况，导致Pod起来太慢。
+  可能原因：如果是异地恢复，可以去查看恢复的命名空间，看Pod是不是Image Pull失败，或者有什么异常情况，导致Pod起来太慢。 
+- 执行应用迁移时，待迁移的应用的PVC的`DataSource`不能是`VolumeSnapshot`，否则迁移会一直卡在目标集群的恢复阶段。  
+  原因：如果待迁移的应用是通过CSI快照方式恢复出来的，PVC的`DataSource`就会变成`VolumeSnapshot`，这时候再迁移就会出问题。  
+  解决方法：要确保待迁移的应用没有被恢复过，或者是文件系统的方式恢复的。
