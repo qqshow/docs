@@ -3,35 +3,35 @@
 ## 目录结构
 
 - [1. 银数多云数据管家典型用户场景介绍](#1-银数多云数据管家典型用户场景介绍)
-  - [1.1 本地Kubernetes集群应用和数据的日常备份与恢复](#11-本地Kubernetes集群应用和数据的日常备份与恢复)
-  - [1.2 在其它Kubernetes集群中恢复应用和数据](#12-在其它Kubernetes集群中恢复应用和数据)
-  - [1.3 应用的跨云迁移](#13-应用的跨云迁移)
+    - [1.1 本地Kubernetes集群应用和数据的日常备份与恢复](#11-本地Kubernetes集群应用和数据的日常备份与恢复)
+    - [1.2 在其它Kubernetes集群中恢复应用和数据](#12-在其它Kubernetes集群中恢复应用和数据)
+    - [1.3 应用的跨云迁移](#13-应用的跨云迁移)
 
 - [2. 运行环境与兼容性](#2-运行环境与兼容性)
 - [3. 配置集群与备份仓库](#3-配置集群与备份仓库)
-  - [3.1 配置待保护Kubernetes集群](#31-配置待保护Kubernetes集群)
-  - [3.2 配置备份仓库](#32-配置备份仓库)
-  - [3.3 配置StorageClass转换的ConfigMap](#33-配置StorageClass转换的ConfigMap)
-  - [3.4 配置快照](#34-配置快照)
+    - [3.1 配置待保护Kubernetes集群](#31-配置待保护Kubernetes集群)
+    - [3.2 配置备份仓库](#32-配置备份仓库)
+    - [3.3 配置StorageClass转换的ConfigMap](#33-配置StorageClass转换的ConfigMap)
+    - [3.4 配置快照](#34-配置快照)
 - [4. 备份设置](#4-备份设置)
-  - [4.1 创建备份策略](#41-创建备份策略)
-  - [4.2 执行备份任务](#42-执行备份任务)
-  - [4.3 查看备份作业](#43-查看备份作业)
+    - [4.1 创建备份策略](#41-创建备份策略)
+    - [4.2 执行备份任务](#42-执行备份任务)
+    - [4.3 查看备份作业](#43-查看备份作业)
 - [5. 恢复至本集群](#5-恢复至本集群)
-  - [5.1 创建应用恢复任务](#51-创建应用恢复任务)
-  - [5.2 执行应用恢复任务](#52-执行应用恢复任务)
-  - [5.3 查看应用恢复作业](#53-查看应用恢复作业)
+    - [5.1 创建应用恢复任务](#51-创建应用恢复任务)
+    - [5.2 执行应用恢复任务](#52-执行应用恢复任务)
+    - [5.3 查看应用恢复作业](#53-查看应用恢复作业)
 - [6. 恢复至其它集群](#6-恢复至其它集群)
-  - [6.1 创建、执行、查看应用恢复任务](#61-创建、执行、查看应用恢复任务)
-  - [6.2 修改相应应用信息](#62-修改相应应用信息)
+    - [6.1 创建、执行、查看应用恢复任务](#61-创建、执行、查看应用恢复任务)
+    - [6.2 修改相应应用信息](#62-修改相应应用信息)
 - [7. 跨集群迁移](#7-跨集群迁移)
-  - [7.1 创建迁移任务](#71-创建迁移任务)
-  - [7.2 执行迁移任务](#72-执行迁移任务)
-  - [7.3 查看迁移作业](#73-查看迁移作业)
-  - [7.4 修改相应应用信息](#74-修改相应应用信息)
+    - [7.1 创建迁移任务](#71-创建迁移任务)
+    - [7.2 执行迁移任务](#72-执行迁移任务)
+    - [7.3 查看迁移作业](#73-查看迁移作业)
+    - [7.4 修改相应应用信息](#74-修改相应应用信息)
 - [8. 故障与诊断](#8-故障与诊断)
-  - [8.1 日志收集](#81-日志收集)
-  - [8.2 常见问题](#82-常见问题)
+    - [8.1 日志收集](#81-日志收集)
+    - [8.2 常见问题](#82-常见问题)
 
 ## 1. 银数多云数据管家典型用户场景介绍
 
@@ -98,7 +98,18 @@
 
 “URL”请输入待保护Kubernetes集群的API服务器地址。
 
-“账号令牌”请输入待保护kubernetes集群的kubeadm账号令牌。kubeadm账号令牌的产生方法可以参考[Kubernetes官方文档](https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-token/)。 
+“账号令牌”栏，请创建一个具有 cluster admin 权限的 service account， 并获取对应的token，或者使用已有的token。以下是创建的命令：
+
+```bash
+kubectl create serviceaccount k8sadmin -n kube-system
+kubectl create clusterrolebinding k8sadminrb --clusterrole=cluster-admin --serviceaccount=kube-system:k8sadmin
+```
+
+用下面命令拿到这个token：
+
+```bash
+kubectl -n kube-system describe secret $(sudo kubectl -n kube-system get secret | (grep k8sadmin || echo "$_") | awk '{print $1}') | grep token: | awk '{print $2}'
+```
 
 第三步，点击“保存”按钮，YS1000会自动对待保护Kubernetes集群进行连接测试，如果连接成功，在状态栏会显示“连接成功”。
 
@@ -196,13 +207,13 @@ git clone https://github.com/kubernetes-csi/external-snapshotter.git
 git checkout release-2.0
 ```
 
-3. 执行以下命令来创建CRD：
+3.  执行以下命令来创建CRD：
 
 ```bash
 kubectl create -f config/crd
 ```
 
-4. 执行以下命令来创建snapshot controller：
+4.  执行以下命令来创建snapshot controller：
 
 ```bash
 kubectl create -f deploy/kubernetes/snapshot-controller/
@@ -415,16 +426,16 @@ TBD
 ### 8.2 常见问题
 
 - 快照备份不工作  
-  可能原因：快照的SnapshotClass没配好，比如没有加所需要的label。  
-  解决方法：请参考3.4节的“配置快照”，把相应的配置做好。
+    可能原因：快照的SnapshotClass没配好，比如没有加所需要的label。  
+    解决方法：请参考3.4节的“配置快照”，把相应的配置做好。
 - 快照恢复失败  
-  可能原因：快照的SnapshotClass的`deletionPolicy`不是`Retain`。  
-  解决方法：用`kubectl`查看相应的`volumesnapshotcontents` CR，看`deletionPolicy`是不是`Retain`，如果不是，请参考3.4节的“配置快照”，并修改SnapshotClass的yaml文件，重新apply。
+    可能原因：快照的SnapshotClass的`deletionPolicy`不是`Retain`。  
+    解决方法：用`kubectl`查看相应的`volumesnapshotcontents` CR，看`deletionPolicy`是不是`Retain`，如果不是，请参考3.4节的“配置快照”，并修改SnapshotClass的yaml文件，重新apply。
 - 备份/恢复/迁移任务卡在50%左右一直不动  
-  可能原因：当前集群前面有备份/恢复一直完成不了，卡在Velero的队列中。  
-  解决方法：查看是否有一个备份/恢复一直在进行，等前一个备份完成，或者超时（现在大约要4小时）后，当前这个任务就会开始。如果不想等，可以重启Velero的Pod来观察问题是否解决。
+    可能原因：当前集群前面有备份/恢复一直完成不了，卡在Velero的队列中。  
+    解决方法：查看是否有一个备份/恢复一直在进行，等前一个备份完成，或者超时（现在大约要4小时）后，当前这个任务就会开始。如果不想等，可以重启Velero的Pod来观察问题是否解决。
 - 恢复很慢，花了比预期多很多的时间  
-  可能原因：如果是异地恢复，可以去查看恢复的命名空间，看Pod是不是Image Pull失败，或者有什么异常情况，导致Pod起来太慢。 
+    可能原因：如果是异地恢复，可以去查看恢复的命名空间，看Pod是不是Image Pull失败，或者有什么异常情况，导致Pod起来太慢。 
 - 执行应用迁移时，待迁移的应用的PVC的`DataSource`不能是`VolumeSnapshot`，否则迁移会一直卡在目标集群的恢复阶段。  
-  原因：如果待迁移的应用是通过CSI快照方式恢复出来的，PVC的`DataSource`就会变成`VolumeSnapshot`，这时候再迁移就会出问题。  
-  解决方法：要确保待迁移的应用没有被恢复过，或者是文件系统的方式恢复的。
+    原因：如果待迁移的应用是通过CSI快照方式恢复出来的，PVC的`DataSource`就会变成`VolumeSnapshot`，这时候再迁移就会出问题。  
+    解决方法：要确保待迁移的应用没有被恢复过，或者是文件系统的方式恢复的。
