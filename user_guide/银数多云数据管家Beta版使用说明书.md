@@ -29,6 +29,7 @@
     - [7.2 执行迁移任务](#72-执行迁移任务)
     - [7.3 查看迁移作业](#73-查看迁移作业)
     - [7.4 修改相应应用信息](#74-修改相应应用信息)
+    - [7.5 钩子程序](#75-钩子程序)
 - [8. 故障与诊断](#8-故障与诊断)
     - [8.1 日志收集](#81-日志收集)
     - [8.2 常见问题](#82-常见问题)
@@ -416,6 +417,75 @@ YS1000 Beta版本支持采用文件系统拷贝或者快照的方式进行持久
 ### 7.4 修改相应应用信息
 
 在目标端集群重新启动应用后，对于和源集群有冲突的资源需要进行相应的更改，然后才能在目标端完全恢复应用。如wordpress在目标端重启启动后，仍旧会绑定源端使用的域名，这时需要管理员将域名指向目标端集群IP，或者执行特定脚本来更改新域名。
+
+### 7.5 钩子程序
+
+钩子程序（Hook) 提供在备份，恢复以及迁移应用执行前后添加应用自定义逻辑的功能，满足不同应用的需求。
+简单的自定义逻辑支持通过ansible playbook 脚本来实现，或者用户也可以根据应用需要开发自定义的钩子程序（容器镜像）。
+钩子程序将会以 kubernetes 作业 (jobs.batch) 的形式在指定的备份，恢复以及迁移前后阶段执行。
+
+常见的场景如下：
+
+1. 应用数据一致性保证
+   - 应用备份之前，通过自定义的 "prebackup" 钩子程序，调用应用的静默 (quiesce) 接口，暂停应用并将应用内存数据以及文件系统缓存刷入磁盘
+   - 应用备份之后，通过自定义的 "postbackup" 钩子程序，调用应用的恢复 (unquiesce) 接口，恢复应用执行
+
+2. 数据验证
+   - 应用备份之后，通过自定义的 "postbackup" 钩子程序，验证数据完整性
+
+3. 环境修改
+   - 应用恢复到远程集群以后，需要对环境配置进行修改，比如通过 ingress 修改用户访问 web URL 地址
+
+下面的例子以 wordpress 应用在跨集群迁移的场景下进行说明，wordpress 部署代码见 [wordpress example](https://github.com/jibutech/app-backup-hooks/tree/main/examples/wordpress)
+
+- 迁移之前应用通过 https://wp-demo.jibudata.com:30165 访问 wordpress 
+- 因业务需求，wordpress 需要迁移到远端目标集群，通过 https://blog.jibudata.com:30165 访问原 wordpress
+
+1. 参考 [7.1 创建迁移任务](#71-创建迁移任务)，在创建迁移任务最后一步，如下图，点击 **添加钩子程序**
+
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/add_hook_1.png)
+
+2. 输入钩子程序名称，此处为 `postrestore-change-ingress-wp-url`
+
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/add_hook_2.png)
+
+3. 在 `Ansible playbook` 区域选择上次Ansible playbook 脚本或者直接将脚本内容复制到文本框中。 
+
+此例的 ansible playbook 脚本为 [wp_migration_url_update.yaml](https://github.com/jibutech/app-backup-hooks/blob/main/examples/wordpress/wp_migration_url_update.yaml)。 
+
+脚本根据wordpress 应用迁移要求，修改 mysql 数据库中的文章和站点的Web URL 地址，同时修改对外访问的ingress 地址。
+
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/add_hook_3.png)
+
+4. 选择钩子程序执行的运行式环境并点击**创建** 按钮。
+
+此例中，Ansible playbook 脚本在目标集群中执行，脚本示例采用在 wordpress mysql pod上直接运行命令进行数据库修改。
+
+填入钩子程序作业运行所需的服务账户以及所在的命名空间，这里使用 `qiming-migration` （velero 安装的命名空间）以及 `velero` 服务账户来运行任务。
+选择执行阶段为 "PostRestore".
+
+**注意**: 
+
+钩子程序运行操作需要确保指定的服务账户具有运行所需要的权限。
+
+此例中 `velero` 服务账户具有 cluster admin 权限，因此可以通过 ansible 脚本登录到目标容器 (wordpress命名空间中的 mysql pod) 进行操作。
+
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/add_hook_4.png)
+
+
+5. **创建**完成后，返回迁移任务向导页面，在钩子程序页面显示创建结果，之后点击 **完成** 按钮，参考 [7.2 执行迁移任务](#72-执行迁移任务) 执行迁移操作
+
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/add_hook_5.png)
+
+6. 完成迁移之后，访问新的 web URL 地址，可观察到 wordpress 页面以更新为新的域名地址
+
+迁移之前：
+
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/wp_before_mig.png)
+
+迁移之后
+
+![](https://gitee.com/jibutech/tech-docs/raw/master/images/wp_after_mig.png)
 
 ## 8. 故障与诊断
 
